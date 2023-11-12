@@ -23,7 +23,7 @@ type Game struct {
 
 var (
 	hangman []string
-	myGame  Game
+	MyGame  Game
 )
 
 const (
@@ -47,9 +47,9 @@ const (
 // initGame initialises the game with user data and all variables necessary.
 func initGame(name, dictionary string, difficulty int) {
 	retreiveWords(dictionary)
-	myGame.Word = string(chooseWord(difficulty))
-	myGame.WordDisplay = []rune(strings.Repeat("_ ", len(myGame.Word)))
-	myGame.WordDisplay = hint()
+	MyGame.Word = string(chooseWord(difficulty))
+	MyGame.WordDisplay = []rune(strings.Repeat("_ ", len(MyGame.Word)))
+	MyGame.WordDisplay = hint()
 }
 
 // checkInputFormat checks if the input's format is right and returns the result with a boolean.
@@ -64,7 +64,7 @@ func checkInputFormat(input string) bool {
 
 // checkWord checks if the player found the word. Returns true if he found it and false if not.
 func checkWord(try string) int {
-	if try == myGame.Word {
+	if try == MyGame.Word {
 		return CORRECTWORD
 	}
 	return INCORRECTWORD
@@ -72,28 +72,28 @@ func checkWord(try string) int {
 
 // Function that changes the wordDisplay to replace the '_' character with the rune played if it is in the word.
 func displayWord(char rune) []rune {
-	for i, r := range myGame.Word {
+	for i, r := range MyGame.Word {
 		if r == char {
-			myGame.WordDisplay[i*2] = char - 32
-			myGame.nbLettersFound++
-			myGame.Score += 10
+			MyGame.WordDisplay[i*2] = char - 32
+			MyGame.nbLettersFound++
+			MyGame.Score += 10
 		}
 	}
-	return myGame.WordDisplay
+	return MyGame.WordDisplay
 }
 
 // revealWord reveals all runes in wordDisplay.
 func revealWord() []rune {
-	for i, r := range myGame.Word {
-		myGame.WordDisplay[i*2] = r - 32
+	for i, r := range MyGame.Word {
+		MyGame.WordDisplay[i*2] = r - 32
 	}
-	return myGame.WordDisplay
+	return MyGame.WordDisplay
 }
 
 // nbRemainingLetters returns the number of letters still not found in the word.
 func nbRemainingLetters() int {
 	var result int
-	for _, char := range myGame.WordDisplay {
+	for _, char := range MyGame.WordDisplay {
 		if char == '_' {
 			result++
 		}
@@ -111,7 +111,7 @@ func retreiveWords(dictionary string) {
 		log.Fatal(err)
 	}
 	if checkDictionary() {
-		myGame.words = strings.Split(string(content), "\n")
+		MyGame.words = strings.Split(string(content), "\n")
 	} else {
 		fmt.Println(colorCode(Red), "Erreur d'acquisition des mots du dictionnaire", CLEARCOLOR)
 		time.Sleep(time.Second * 2)
@@ -142,18 +142,18 @@ func retreiveHangman() {
 
 // checkRune checks if the rune played is already played, correct or incorrect.
 func checkRune(char rune) int {
-	for _, r := range myGame.RunesPlayed {
+	for _, r := range MyGame.RunesPlayed {
 		if r == char {
 			return ALREADYPLAYED
 		}
 	}
-	for _, r := range strings.ToUpper(myGame.Word) {
+	for _, r := range strings.ToUpper(MyGame.Word) {
 		if r == char {
-			myGame.RunesPlayed = append(myGame.RunesPlayed, char)
+			MyGame.RunesPlayed = append(MyGame.RunesPlayed, char)
 			return CORRECTRUNE
 		}
 	}
-	myGame.RunesPlayed = append(myGame.RunesPlayed, char)
+	MyGame.RunesPlayed = append(MyGame.RunesPlayed, char)
 	return INCORRECTRUNE
 }
 
@@ -162,43 +162,43 @@ func countScore(result int) {
 	case ALREADYPLAYED:
 		break
 	case CORRECTRUNE:
-		myGame.Score += 10
+		MyGame.Score += 10
 	case INCORRECTRUNE:
-		myGame.Score -= 5
-		myGame.nbErrors++
+		MyGame.Score -= 5
+		MyGame.nbErrors++
 	case CORRECTWORD:
-		myGame.Score += 11 * nbRemainingLetters()
+		MyGame.Score += 11 * nbRemainingLetters()
 	case INCORRECTWORD:
-		myGame.nbErrors += 2
-		myGame.Score -= 5
+		MyGame.nbErrors += 2
+		MyGame.Score -= 5
 	}
 }
 
 // clearGameData clears the previous' game's data to start a new one.
 func clearGameData() {
-	myGame.Score = 0
-	myGame.Word = ""
-	myGame.WordDisplay = append(myGame.WordDisplay[0:0])
-	myGame.RunesPlayed = append(myGame.RunesPlayed[0:0])
-	myGame.words = append(myGame.words[0:0])
-	myGame.nbLettersFound = 0
-	myGame.nbErrors = 0
+	MyGame.Score = 0
+	MyGame.Word = ""
+	MyGame.WordDisplay = append(MyGame.WordDisplay[0:0])
+	MyGame.RunesPlayed = append(MyGame.RunesPlayed[0:0])
+	MyGame.words = append(MyGame.words[0:0])
+	MyGame.nbLettersFound = 0
+	MyGame.nbErrors = 0
 }
 
 // hint reveal a random rune in wordDisplay.
 func hint() []rune {
-	if myGame.Difficulty != LEGENDARY {
-		i := rand.Intn(len(myGame.Word) - 1)
-		char := []rune(myGame.Word)[i]
-		myGame.WordDisplay[i*2] = char - 32
+	if MyGame.Difficulty != LEGENDARY {
+		i := rand.Intn(len(MyGame.Word) - 1)
+		char := []rune(MyGame.Word)[i]
+		MyGame.WordDisplay[i*2] = char - 32
 	}
-	return myGame.WordDisplay
+	return MyGame.WordDisplay
 }
 
 // chooseWord chooses randomly a word from words (the dictionary's words' list) according to the difficulty set previously.
 func chooseWord(difficulty int) string {
 	var possibleWords []string
-	for _, str := range myGame.words {
+	for _, str := range MyGame.words {
 		if len(str) >= difficulty-2 && len(str) <= difficulty {
 			possibleWords = append(possibleWords, str)
 		}
@@ -210,7 +210,7 @@ func chooseWord(difficulty int) string {
 	}
 	if len(possibleWords) < 10 {
 		var i int
-		for _, str := range myGame.words {
+		for _, str := range MyGame.words {
 			i++
 			if len(str) == difficulty-i-2 || len(str) == difficulty+i {
 				possibleWords = append(possibleWords, str)
@@ -261,9 +261,9 @@ func toStringDifficulty(difficulty int) string {
 
 // checkDictionary checks if the dictionary is usable or not and changes the case.
 func checkDictionary() bool {
-	for i, str := range myGame.words {
-		myGame.words[i] = strings.ToLower(str)
-		str = myGame.words[i]
+	for i, str := range MyGame.words {
+		MyGame.words[i] = strings.ToLower(str)
+		str = MyGame.words[i]
 		for _, char := range str {
 			if char < 'a' || char > 'z' {
 				return false
@@ -275,10 +275,10 @@ func checkDictionary() bool {
 
 // checkEndGame verify if the game is finished and returns the status and true if the game is finished or false is the game is still ongoing.
 func checkEndGame() (int, bool) {
-	if myGame.nbErrors >= len(hangman)-1 {
+	if MyGame.nbErrors >= len(hangman)-1 {
 		return LOOSE, true
 	}
-	if strings.Join(strings.Split(string(myGame.WordDisplay), " "), "") == strings.ToUpper(myGame.Word) {
+	if strings.Join(strings.Split(string(MyGame.WordDisplay), " "), "") == strings.ToUpper(MyGame.Word) {
 		return WIN, true
 	}
 	return ONGOING, false
