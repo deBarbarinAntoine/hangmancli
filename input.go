@@ -42,7 +42,7 @@ func nameInput() bool {
 	if len(name) < 3 || len(name) > 15 || !checkInputFormat(name) {
 		return false
 	}
-	myGame.Name = name
+	MyGame.Name = name
 	return true
 }
 

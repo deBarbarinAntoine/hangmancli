@@ -27,11 +27,11 @@ var savedGames []Save
 // saveGame saves the current game in fileName.
 func saveGame(fileName string) {
 	currentGame := Save{
-		Name:       myGame.Name,
-		Score:      myGame.Score,
-		Word:       myGame.Word,
-		Difficulty: toStringDifficulty(myGame.Difficulty),
-		Dictionary: dictionaryName(myGame.Dictionary),
+		Name:       MyGame.Name,
+		Score:      MyGame.Score,
+		Word:       MyGame.Word,
+		Difficulty: toStringDifficulty(MyGame.Difficulty),
+		Dictionary: dictionaryName(MyGame.Dictionary),
 	}
 	newEntry, err := json.Marshal(currentGame)
 	if err != nil {
@@ -88,18 +88,18 @@ func chargeParameters(fileName string) {
 		fmt.Println(colorCode(Orange), string(savedEntries), CLEARCOLOR)
 		log.Fatal(err)
 	} else {
-		myGame.Name = savedParameters.Name
-		myGame.Dictionary = savedParameters.DictionaryPath
-		myGame.Difficulty = savedParameters.Difficulty
+		MyGame.Name = savedParameters.Name
+		MyGame.Dictionary = savedParameters.DictionaryPath
+		MyGame.Difficulty = savedParameters.Difficulty
 	}
 }
 
 // saveParameters saves all current parameters in fileName for later use.
 func saveParameters(fileName string) {
 	currentParameters := Parameters{
-		Name:           myGame.Name,
-		DictionaryPath: myGame.Dictionary,
-		Difficulty:     myGame.Difficulty,
+		Name:           MyGame.Name,
+		DictionaryPath: MyGame.Dictionary,
+		Difficulty:     MyGame.Difficulty,
 	}
 	newEntry, err := json.Marshal(currentParameters)
 	if err != nil {

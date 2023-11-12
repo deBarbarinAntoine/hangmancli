@@ -72,20 +72,20 @@ func setGame() {
 func setDifficulty() {
 	switch menu("------- DIFFICULTÉ -------", "Facile", "Intermédiaire", "Difficile", "Légendaire") {
 	case "Facile":
-		myGame.Difficulty = EASY
+		MyGame.Difficulty = EASY
 	case "Intermédiaire":
-		myGame.Difficulty = MEDIUM
+		MyGame.Difficulty = MEDIUM
 	case "Difficile":
-		myGame.Difficulty = DIFFICULT
+		MyGame.Difficulty = DIFFICULT
 	case "Légendaire":
-		myGame.Difficulty = LEGENDARY
+		MyGame.Difficulty = LEGENDARY
 	}
 	play()
 }
 
 func play() {
 	retreiveHangman()
-	initGame(myGame.Name, myGame.Dictionary, myGame.Difficulty)
+	initGame(MyGame.Name, MyGame.Dictionary, MyGame.Difficulty)
 	var status int
 	var gameHasEnded bool
 	var previousResult int
@@ -93,13 +93,13 @@ func play() {
 		clearTerminal()
 		fmt.Println(colorCode(Deepskyblue), "------------------------- HANGMAN -------------------------", CLEARCOLOR)
 		fmt.Println()
-		fmt.Println(colorCode(Forestgreen), "Nom : ", colorCode(Aquamarine), myGame.Name, colorCode(Forestgreen), "\tDifficulté : ", colorCode(Aquamarine), toStringDifficulty(myGame.Difficulty), colorCode(Forestgreen), "\tDictionnaire : ", colorCode(Aquamarine), dictionaryName(myGame.Dictionary), colorCode(Forestgreen), "\tScore : ", colorCode(Aquamarine), myGame.Score, CLEARCOLOR)
+		fmt.Println(colorCode(Forestgreen), "Nom : ", colorCode(Aquamarine), MyGame.Name, colorCode(Forestgreen), "\tDifficulté : ", colorCode(Aquamarine), toStringDifficulty(MyGame.Difficulty), colorCode(Forestgreen), "\tDictionnaire : ", colorCode(Aquamarine), dictionaryName(MyGame.Dictionary), colorCode(Forestgreen), "\tScore : ", colorCode(Aquamarine), MyGame.Score, CLEARCOLOR)
 		fmt.Println()
-		fmt.Println(hangman[myGame.nbErrors])
+		fmt.Println(hangman[MyGame.nbErrors])
 		fmt.Println()
-		fmt.Println(colorCode(Aquamarine), string(myGame.WordDisplay), CLEARCOLOR)
+		fmt.Println(colorCode(Aquamarine), string(MyGame.WordDisplay), CLEARCOLOR)
 		fmt.Println()
-		fmt.Println(colorCode(Forestgreen), "Lettres déjà jouées : ", colorCode(Orange), string(myGame.RunesPlayed), CLEARCOLOR)
+		fmt.Println(colorCode(Forestgreen), "Lettres déjà jouées : ", colorCode(Orange), string(MyGame.RunesPlayed), CLEARCOLOR)
 		fmt.Println()
 		if status, gameHasEnded = checkEndGame(); gameHasEnded {
 			time.Sleep(time.Second * 2)
@@ -125,15 +125,15 @@ func endGame(status int) {
 		if status == WIN {
 			fmt.Println(colorCode(Cyan), "\tFÉLICITATIONS, VOUS AVEZ GAGNÉ !", CLEARCOLOR)
 			fmt.Println()
-			fmt.Println(colorCode(Aquamarine), "Le mot était ", strings.ToUpper(myGame.Word), CLEARCOLOR)
+			fmt.Println(colorCode(Aquamarine), "Le mot était ", strings.ToUpper(MyGame.Word), CLEARCOLOR)
 			fmt.Println()
-			fmt.Println(colorCode(Aquamarine), "Votre score est : ", myGame.Score, CLEARCOLOR)
+			fmt.Println(colorCode(Aquamarine), "Votre score est : ", MyGame.Score, CLEARCOLOR)
 		} else if status == LOOSE {
 			fmt.Println(colorCode(Orange), "\tGAME OVER !", CLEARCOLOR)
 			fmt.Println()
-			fmt.Println(colorCode(Red), hangman[myGame.nbErrors], CLEARCOLOR)
+			fmt.Println(colorCode(Red), hangman[MyGame.nbErrors], CLEARCOLOR)
 			fmt.Println()
-			fmt.Println(colorCode(Aquamarine), "Le mot était ", myGame.Word, CLEARCOLOR)
+			fmt.Println(colorCode(Aquamarine), "Le mot était ", MyGame.Word, CLEARCOLOR)
 		}
 
 		fmt.Println()
@@ -154,11 +154,11 @@ func endGame(status int) {
 func changeDictionary() {
 	switch menu("------- CHANGER DE DICTIONNAIRE -------", "Scrabble français", "Scabble Anglais", "Italien", "Retour") {
 	case "Scrabble français":
-		myGame.Dictionary = "../Files/Dictionaries/ods5.txt"
+		MyGame.Dictionary = "../Files/Dictionaries/ods5.txt"
 	case "Scabble Anglais":
-		myGame.Dictionary = "../Files/Dictionaries/ospd3_expurgated.txt"
+		MyGame.Dictionary = "../Files/Dictionaries/ospd3_expurgated.txt"
 	case "Italien":
-		myGame.Dictionary = "../Files/Dictionaries/italiano.txt"
+		MyGame.Dictionary = "../Files/Dictionaries/italiano.txt"
 	case "Retour":
 		break
 	}
