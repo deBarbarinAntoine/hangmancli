@@ -1,4 +1,4 @@
-package HangmanCLI
+package hangmancli
 
 import (
 	"strconv"
