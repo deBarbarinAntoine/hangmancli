@@ -8,42 +8,41 @@ import (
 	"time"
 )
 
-func input() int {
+func (game *Game) input() int {
 	var input string
 	_, err := fmt.Scanln(&input)
 	if err != nil {
 		fmt.Println(colorCode(Red), "Erreur de saisie !", CLEARCOLOR)
 		time.Sleep(time.Second * 2)
 	}
-	if len(input) > 1 && checkInputFormat(input) {
-		result := checkWord(input)
-		countScore(result)
+	if len(input) > 1 && CheckInputFormat(input) {
+		result := game.CheckWord(input)
+		game.CountScore(result)
 		if result == CORRECTWORD {
-			revealWord()
+			game.RevealWord()
 		}
 		return result
-	} else if len(input) == 1 && checkInputFormat(input) {
+	} else if len(input) == 1 && CheckInputFormat(input) {
 		input = strings.ToUpper(input)
-		result := checkRune([]rune(input)[0])
-		displayWord([]rune(strings.ToLower(input))[0])
-		countScore(result)
+		result := game.CheckRune([]rune(input)[0])
+		game.DisplayWord([]rune(strings.ToLower(input))[0])
+		game.CountScore(result)
 		return result
 	} else {
 		return INCORRECTINPUT
 	}
 }
 
-func nameInput() bool {
+func nameInput() (bool, string) {
 	var name string
 	_, err := fmt.Scanln(&name)
 	if err != nil {
 		log.Fatal(err)
 	}
-	if len(name) < 3 || len(name) > 15 || !checkInputFormat(name) {
-		return false
+	if len(name) < 3 || len(name) > 15 || !CheckInputFormat(name) {
+		return false, ""
 	}
-	MyGame.Name = name
-	return true
+	return true, name
 }
 
 func menu(title string, options ...string) string {

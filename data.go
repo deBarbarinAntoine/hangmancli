@@ -24,14 +24,14 @@ type Parameters struct {
 
 var savedGames []Save
 
-// saveGame saves the current game in fileName.
-func saveGame(fileName string) {
+// SaveGame saves the current game in fileName.
+func (game *Game) SaveGame(fileName string) {
 	currentGame := Save{
-		Name:       MyGame.Name,
-		Score:      MyGame.Score,
-		Word:       MyGame.Word,
-		Difficulty: toStringDifficulty(MyGame.Difficulty),
-		Dictionary: dictionaryName(MyGame.Dictionary),
+		Name:       game.Name,
+		Score:      game.Score,
+		Word:       game.Word,
+		Difficulty: ToStringDifficulty(game.Difficulty),
+		Dictionary: DictionaryName(game.Dictionary),
 	}
 	newEntry, err := json.Marshal(currentGame)
 	if err != nil {
@@ -50,12 +50,12 @@ func saveGame(fileName string) {
 	}
 }
 
-// retreiveSavedGames retreive all saved games present in fileName and put it in savedEntries.
-func retreiveSavedGames(fileName string) {
+// RetreiveSavedGames retreive all saved games present in fileName and put it in savedEntries.
+func RetreiveSavedGames(fileName string) []Save {
 	savedEntries, err := os.ReadFile(fileName)
 	if err != nil {
 		fmt.Println(colorCode(Salmon), "Aucune sauvegarde détectée...", CLEARCOLOR)
-		return
+		return nil
 	}
 	savedEntries = append([]byte{'[', '\n'}, savedEntries...)
 	savedEntries = append(savedEntries, '\n', ']')
@@ -67,10 +67,11 @@ func retreiveSavedGames(fileName string) {
 		fmt.Println(colorCode(Orange), string(savedEntries), CLEARCOLOR)
 		log.Fatal(err)
 	}
+	return savedGames
 }
 
-// chargeParameters retreive the parameters present in fileName and changes all corresponding variables.
-func chargeParameters(fileName string) {
+// ChargeParameters retreive the parameters present in fileName and changes all corresponding variables.
+func (game *Game) ChargeParameters(fileName string) {
 	var savedParameters Parameters
 	savedEntries, err := os.ReadFile(fileName)
 	if err != nil {
@@ -88,18 +89,18 @@ func chargeParameters(fileName string) {
 		fmt.Println(colorCode(Orange), string(savedEntries), CLEARCOLOR)
 		log.Fatal(err)
 	} else {
-		MyGame.Name = savedParameters.Name
-		MyGame.Dictionary = savedParameters.DictionaryPath
-		MyGame.Difficulty = savedParameters.Difficulty
+		game.Name = savedParameters.Name
+		game.Dictionary = savedParameters.DictionaryPath
+		game.Difficulty = savedParameters.Difficulty
 	}
 }
 
-// saveParameters saves all current parameters in fileName for later use.
-func saveParameters(fileName string) {
+// SaveParameters saves all current parameters in fileName for later use.
+func (game *Game) SaveParameters(fileName string) {
 	currentParameters := Parameters{
-		Name:           MyGame.Name,
-		DictionaryPath: MyGame.Dictionary,
-		Difficulty:     MyGame.Difficulty,
+		Name:           game.Name,
+		DictionaryPath: game.Dictionary,
+		Difficulty:     game.Difficulty,
 	}
 	newEntry, err := json.Marshal(currentParameters)
 	if err != nil {

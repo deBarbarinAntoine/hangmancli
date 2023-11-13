@@ -10,6 +10,8 @@ import (
 	"time"
 )
 
+var dictionary string
+
 // runCmd executes the command and arguments put in the parameters.
 func runCmd(name string, arg ...string) {
 	cmd := exec.Command(name, arg...)
@@ -38,54 +40,56 @@ func principalMenu() {
 	for {
 		switch menu("------- MENU PRINCIPAL -------", "Nouvelle partie", "Dictionnaire", "Meilleurs scores", "Quitter") {
 		case "Nouvelle partie":
-			setGame()
+			var myGame Game
+			myGame.setGame()
 		case "Dictionnaire":
 			changeDictionary()
 		case "Meilleurs scores":
 			topScores()
 		case "Quitter":
-			saveParameters("../Files/config.txt")
 			os.Exit(0)
 		}
 	}
 }
 
-func setGame() {
-	var incorrectInput bool
+func (game *Game) setGame() {
+	game.ChargeParameters("../Files/config.txt")
+	if dictionary != "" {
+		game.Dictionary = dictionary
+	}
+	correctInput := true
 	for {
 		clearTerminal()
 		fmt.Println(colorCode(Deepskyblue), "------- INITIALISATION DU JEU -------", CLEARCOLOR)
 		fmt.Println()
-		if incorrectInput {
+		if !correctInput {
 			fmt.Println(colorCode(Red), "Nom saisi incorrect (entre 3 et 15 caractères, sans nombres ni signes)", CLEARCOLOR)
 		}
 		fmt.Print(colorCode(Forestgreen), "Saisissez votre nom : ", colorCode(Aquamarine))
-		if nameInput() {
+		if correctInput, game.Name = nameInput(); correctInput {
 			break
-		} else {
-			incorrectInput = true
 		}
 	}
-	setDifficulty()
+	game.setDifficulty()
 }
 
-func setDifficulty() {
+func (game *Game) setDifficulty() {
 	switch menu("------- DIFFICULTÉ -------", "Facile", "Intermédiaire", "Difficile", "Légendaire") {
 	case "Facile":
-		MyGame.Difficulty = EASY
+		game.Difficulty = EASY
 	case "Intermédiaire":
-		MyGame.Difficulty = MEDIUM
+		game.Difficulty = MEDIUM
 	case "Difficile":
-		MyGame.Difficulty = DIFFICULT
+		game.Difficulty = DIFFICULT
 	case "Légendaire":
-		MyGame.Difficulty = LEGENDARY
+		game.Difficulty = LEGENDARY
 	}
-	play()
+	game.play()
 }
 
-func play() {
+func (game *Game) play() {
 	retreiveHangman()
-	initGame(MyGame.Name, MyGame.Dictionary, MyGame.Difficulty)
+	game.InitGame()
 	var status int
 	var gameHasEnded bool
 	var previousResult int
@@ -93,15 +97,15 @@ func play() {
 		clearTerminal()
 		fmt.Println(colorCode(Deepskyblue), "------------------------- HANGMAN -------------------------", CLEARCOLOR)
 		fmt.Println()
-		fmt.Println(colorCode(Forestgreen), "Nom : ", colorCode(Aquamarine), MyGame.Name, colorCode(Forestgreen), "\tDifficulté : ", colorCode(Aquamarine), toStringDifficulty(MyGame.Difficulty), colorCode(Forestgreen), "\tDictionnaire : ", colorCode(Aquamarine), dictionaryName(MyGame.Dictionary), colorCode(Forestgreen), "\tScore : ", colorCode(Aquamarine), MyGame.Score, CLEARCOLOR)
+		fmt.Println(colorCode(Forestgreen), "Nom : ", colorCode(Aquamarine), game.Name, colorCode(Forestgreen), "\tDifficulté : ", colorCode(Aquamarine), ToStringDifficulty(game.Difficulty), colorCode(Forestgreen), "\tDictionnaire : ", colorCode(Aquamarine), DictionaryName(game.Dictionary), colorCode(Forestgreen), "\tScore : ", colorCode(Aquamarine), game.Score, CLEARCOLOR)
 		fmt.Println()
-		fmt.Println(hangman[MyGame.nbErrors])
+		fmt.Println(hangman[game.nbErrors])
 		fmt.Println()
-		fmt.Println(colorCode(Aquamarine), string(MyGame.WordDisplay), CLEARCOLOR)
+		fmt.Println(colorCode(Aquamarine), string(game.WordDisplay), CLEARCOLOR)
 		fmt.Println()
-		fmt.Println(colorCode(Forestgreen), "Lettres déjà jouées : ", colorCode(Orange), string(MyGame.RunesPlayed), CLEARCOLOR)
+		fmt.Println(colorCode(Forestgreen), "Lettres déjà jouées : ", colorCode(Orange), string(game.RunesPlayed), CLEARCOLOR)
 		fmt.Println()
-		if status, gameHasEnded = checkEndGame(); gameHasEnded {
+		if status, gameHasEnded = game.CheckEndGame(); gameHasEnded {
 			time.Sleep(time.Second * 2)
 			break
 		}
@@ -114,26 +118,26 @@ func play() {
 			fmt.Println()
 		}
 		fmt.Print(colorCode(Deepskyblue), "Proposez une lettre ou un mot : ", colorCode(Aquamarine))
-		previousResult = input()
+		previousResult = game.input()
 	}
-	endGame(status)
+	game.endGame(status)
 }
 
-func endGame(status int) {
+func (game *Game) endGame(status int) {
 	for {
 		clearTerminal()
 		if status == WIN {
 			fmt.Println(colorCode(Cyan), "\tFÉLICITATIONS, VOUS AVEZ GAGNÉ !", CLEARCOLOR)
 			fmt.Println()
-			fmt.Println(colorCode(Aquamarine), "Le mot était ", strings.ToUpper(MyGame.Word), CLEARCOLOR)
+			fmt.Println(colorCode(Aquamarine), "Le mot était ", strings.ToUpper(game.Word), CLEARCOLOR)
 			fmt.Println()
-			fmt.Println(colorCode(Aquamarine), "Votre score est : ", MyGame.Score, CLEARCOLOR)
+			fmt.Println(colorCode(Aquamarine), "Votre score est : ", game.Score, CLEARCOLOR)
 		} else if status == LOOSE {
 			fmt.Println(colorCode(Orange), "\tGAME OVER !", CLEARCOLOR)
 			fmt.Println()
-			fmt.Println(colorCode(Red), hangman[MyGame.nbErrors], CLEARCOLOR)
+			fmt.Println(colorCode(Red), hangman[game.nbErrors], CLEARCOLOR)
 			fmt.Println()
-			fmt.Println(colorCode(Aquamarine), "Le mot était ", MyGame.Word, CLEARCOLOR)
+			fmt.Println(colorCode(Aquamarine), "Le mot était ", game.Word, CLEARCOLOR)
 		}
 
 		fmt.Println()
@@ -147,26 +151,27 @@ func endGame(status int) {
 			break
 		}
 	}
-	saveGame("../Files/scores.txt")
-	clearGameData()
+	game.SaveGame("../Files/scores.txt")
+	game.SaveParameters("../Files/config.txt")
+	game.ClearGameData()
 }
 
 func changeDictionary() {
 	switch menu("------- CHANGER DE DICTIONNAIRE -------", "Scrabble français", "Scabble Anglais", "Italien", "Retour") {
 	case "Scrabble français":
-		MyGame.Dictionary = "../Files/Dictionaries/ods5.txt"
+		dictionary = "../Files/Dictionaries/ods5.txt"
 	case "Scabble Anglais":
-		MyGame.Dictionary = "../Files/Dictionaries/ospd3_expurgated.txt"
+		dictionary = "../Files/Dictionaries/ospd3_expurgated.txt"
 	case "Italien":
-		MyGame.Dictionary = "../Files/Dictionaries/italiano.txt"
+		dictionary = "../Files/Dictionaries/italiano.txt"
 	case "Retour":
 		break
 	}
 }
 
 func topScores() {
-	retreiveSavedGames("../Files/scores.txt")
-	sortTopTenGames()
+	RetreiveSavedGames("../Files/scores.txt")
+	SortTopTenGames()
 	for {
 		clearTerminal()
 		fmt.Println(colorCode(Deepskyblue), "-------------------- MEILLEURS SCORES --------------------", CLEARCOLOR)

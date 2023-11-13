@@ -21,10 +21,7 @@ type Game struct {
 	nbLettersFound, nbErrors int
 }
 
-var (
-	hangman []string
-	MyGame  Game
-)
+var hangman []string
 
 const (
 	ALREADYPLAYED  = 1
@@ -44,16 +41,16 @@ const (
 	LOOSE   = 16
 )
 
-// initGame initialises the game with user data and all variables necessary.
-func initGame(name, dictionary string, difficulty int) {
-	retreiveWords(dictionary)
-	MyGame.Word = string(chooseWord(difficulty))
-	MyGame.WordDisplay = []rune(strings.Repeat("_ ", len(MyGame.Word)))
-	MyGame.WordDisplay = hint()
+// InitGame initialises the game with user data and all variables necessary.
+func (game *Game) InitGame() {
+	retreiveWords(game.Dictionary)
+	game.Word = string(game.chooseWord())
+	game.WordDisplay = []rune(strings.Repeat("_ ", len(game.Word)))
+	game.hint()
 }
 
-// checkInputFormat checks if the input's format is right and returns the result with a boolean.
-func checkInputFormat(input string) bool {
+// CheckInputFormat checks if the input's format is right and returns the result with a boolean.
+func CheckInputFormat(input string) bool {
 	for _, char := range input {
 		if (char < 'a' || char > 'z') && (char < 'A' || char > 'Z') {
 			return false
@@ -62,38 +59,35 @@ func checkInputFormat(input string) bool {
 	return true
 }
 
-// checkWord checks if the player found the word. Returns true if he found it and false if not.
-func checkWord(try string) int {
-	if try == MyGame.Word {
+// CheckWord checks if the player found the word. Returns true if he found it and false if not.
+func (game *Game) CheckWord(try string) int {
+	if try == game.Word {
 		return CORRECTWORD
 	}
 	return INCORRECTWORD
 }
 
-// Function that changes the wordDisplay to replace the '_' character with the rune played if it is in the word.
-func displayWord(char rune) []rune {
-	for i, r := range MyGame.Word {
+// DisplayWord changes the wordDisplay to replace the '_' character with the rune played if it is in the word.
+func (game *Game) DisplayWord(char rune) {
+	for i, r := range game.Word {
 		if r == char {
-			MyGame.WordDisplay[i*2] = char - 32
-			MyGame.nbLettersFound++
-			MyGame.Score += 10
+			game.WordDisplay[i*2] = char - 32
+			game.nbLettersFound++
 		}
 	}
-	return MyGame.WordDisplay
 }
 
-// revealWord reveals all runes in wordDisplay.
-func revealWord() []rune {
-	for i, r := range MyGame.Word {
-		MyGame.WordDisplay[i*2] = r - 32
+// RevealWord reveals all runes in wordDisplay.
+func (game *Game) RevealWord() {
+	for i, r := range game.Word {
+		game.WordDisplay[i*2] = r - 32
 	}
-	return MyGame.WordDisplay
 }
 
-// nbRemainingLetters returns the number of letters still not found in the word.
-func nbRemainingLetters() int {
+// NbRemainingLetters returns the number of letters still not found in the word.
+func (game *Game) NbRemainingLetters() int {
 	var result int
-	for _, char := range MyGame.WordDisplay {
+	for _, char := range game.WordDisplay {
 		if char == '_' {
 			result++
 		}
@@ -102,7 +96,8 @@ func nbRemainingLetters() int {
 }
 
 // retreiveWords retreive the words from the selected dictionary.
-func retreiveWords(dictionary string) {
+func retreiveWords(dictionary string) []string {
+	var words []string
 	if dictionary == "" {
 		dictionary = "../Files/Dictionaries/ods5.txt"
 	}
@@ -110,12 +105,13 @@ func retreiveWords(dictionary string) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	if checkDictionary() {
-		MyGame.words = strings.Split(string(content), "\n")
-	} else {
+	words = strings.Split(string(content), "\n")
+	if !checkDictionary(words) {
 		fmt.Println(colorCode(Red), "Erreur d'acquisition des mots du dictionnaire", CLEARCOLOR)
 		time.Sleep(time.Second * 2)
+		words = retreiveWords("../Files/Dictionaries/ods5.txt")
 	}
+	return words
 }
 
 // retreiveHangman retreives the hangman in /Files/hangman.txt and stores it in hangman.
@@ -140,79 +136,79 @@ func retreiveHangman() {
 	}
 }
 
-// checkRune checks if the rune played is already played, correct or incorrect.
-func checkRune(char rune) int {
-	for _, r := range MyGame.RunesPlayed {
+// CheckRune checks if the rune played is already played, correct or incorrect.
+func (game *Game) CheckRune(char rune) int {
+	for _, r := range game.RunesPlayed {
 		if r == char {
 			return ALREADYPLAYED
 		}
 	}
-	for _, r := range strings.ToUpper(MyGame.Word) {
+	for _, r := range strings.ToUpper(game.Word) {
 		if r == char {
-			MyGame.RunesPlayed = append(MyGame.RunesPlayed, char)
+			game.RunesPlayed = append(game.RunesPlayed, char)
 			return CORRECTRUNE
 		}
 	}
-	MyGame.RunesPlayed = append(MyGame.RunesPlayed, char)
+	game.RunesPlayed = append(game.RunesPlayed, char)
 	return INCORRECTRUNE
 }
 
-func countScore(result int) {
+// CountScore changes the score according to the result given in the parameters.
+func (game *Game) CountScore(result int) {
 	switch result {
 	case ALREADYPLAYED:
 		break
 	case CORRECTRUNE:
-		MyGame.Score += 10
+		game.Score += 10
 	case INCORRECTRUNE:
-		MyGame.Score -= 5
-		MyGame.nbErrors++
+		game.Score -= 5
+		game.nbErrors++
 	case CORRECTWORD:
-		MyGame.Score += 11 * nbRemainingLetters()
+		game.Score += 11 * game.NbRemainingLetters()
 	case INCORRECTWORD:
-		MyGame.nbErrors += 2
-		MyGame.Score -= 5
+		game.nbErrors += 2
+		game.Score -= 5
 	}
 }
 
-// clearGameData clears the previous' game's data to start a new one.
-func clearGameData() {
-	MyGame.Score = 0
-	MyGame.Word = ""
-	MyGame.WordDisplay = append(MyGame.WordDisplay[0:0])
-	MyGame.RunesPlayed = append(MyGame.RunesPlayed[0:0])
-	MyGame.words = append(MyGame.words[0:0])
-	MyGame.nbLettersFound = 0
-	MyGame.nbErrors = 0
+// ClearGameData clears the previous' game's data to start a new one.
+func (game *Game) ClearGameData() {
+	game.Score = 0
+	game.Word = ""
+	game.WordDisplay = append(game.WordDisplay[0:0])
+	game.RunesPlayed = append(game.RunesPlayed[0:0])
+	game.words = append(game.words[0:0])
+	game.nbLettersFound = 0
+	game.nbErrors = 0
 }
 
 // hint reveal a random rune in wordDisplay.
-func hint() []rune {
-	if MyGame.Difficulty != LEGENDARY {
-		i := rand.Intn(len(MyGame.Word) - 1)
-		char := []rune(MyGame.Word)[i]
-		MyGame.WordDisplay[i*2] = char - 32
+func (game *Game) hint() {
+	if game.Difficulty != LEGENDARY {
+		i := rand.Intn(len(game.Word) - 1)
+		char := []rune(game.Word)[i]
+		game.WordDisplay[i*2] = char - 32
 	}
-	return MyGame.WordDisplay
 }
 
 // chooseWord chooses randomly a word from words (the dictionary's words' list) according to the difficulty set previously.
-func chooseWord(difficulty int) string {
+func (game *Game) chooseWord() string {
 	var possibleWords []string
-	for _, str := range MyGame.words {
-		if len(str) >= difficulty-2 && len(str) <= difficulty {
+	for _, str := range game.words {
+		if len(str) >= game.Difficulty-2 && len(str) <= game.Difficulty {
 			possibleWords = append(possibleWords, str)
 		}
-		if difficulty == LEGENDARY {
-			if len(str) > difficulty {
+		if game.Difficulty == LEGENDARY {
+			if len(str) > game.Difficulty {
 				possibleWords = append(possibleWords, str)
 			}
 		}
 	}
 	if len(possibleWords) < 10 {
 		var i int
-		for _, str := range MyGame.words {
+		for _, str := range game.words {
 			i++
-			if len(str) == difficulty-i-2 || len(str) == difficulty+i {
+			if len(str) == game.Difficulty-i-2 || len(str) == game.Difficulty+i {
 				possibleWords = append(possibleWords, str)
 				if len(possibleWords) > 10 {
 					break
@@ -223,8 +219,8 @@ func chooseWord(difficulty int) string {
 	return possibleWords[rand.Intn(len(possibleWords)-1)]
 }
 
-// dictionaryName returns the name of the dictionary.
-func dictionaryName(dictionary string) string {
+// DictionaryName returns the name of the dictionary.
+func DictionaryName(dictionary string) string {
 	switch dictionary {
 	case "../Files/Dictionaries/ods5.txt":
 		return "Scrabble"
@@ -237,14 +233,14 @@ func dictionaryName(dictionary string) string {
 	}
 }
 
-// sortTopTenGames sort the saved games by score in decreasing order.
-func sortTopTenGames() []Save {
+// SortTopTenGames sort the saved games by score in decreasing order.
+func SortTopTenGames() []Save {
 	sort.SliceStable(savedGames, func(i, j int) bool { return savedGames[i].Score > savedGames[j].Score })
 	return savedGames
 }
 
-// toStringDifficulty returns the name of the difficulty.
-func toStringDifficulty(difficulty int) string {
+// ToStringDifficulty returns the name of the difficulty.
+func ToStringDifficulty(difficulty int) string {
 	switch difficulty {
 	case EASY:
 		return "Facile"
@@ -260,10 +256,10 @@ func toStringDifficulty(difficulty int) string {
 }
 
 // checkDictionary checks if the dictionary is usable or not and changes the case.
-func checkDictionary() bool {
-	for i, str := range MyGame.words {
-		MyGame.words[i] = strings.ToLower(str)
-		str = MyGame.words[i]
+func checkDictionary(words []string) bool {
+	for i, str := range words {
+		words[i] = strings.ToLower(str)
+		str = words[i]
 		for _, char := range str {
 			if char < 'a' || char > 'z' {
 				return false
@@ -273,12 +269,12 @@ func checkDictionary() bool {
 	return true
 }
 
-// checkEndGame verify if the game is finished and returns the status and true if the game is finished or false is the game is still ongoing.
-func checkEndGame() (int, bool) {
-	if MyGame.nbErrors >= len(hangman)-1 {
+// CheckEndGame verify if the game is finished and returns the status and true if the game is finished or false is the game is still ongoing.
+func (game *Game) CheckEndGame() (int, bool) {
+	if game.nbErrors >= len(hangman)-1 {
 		return LOOSE, true
 	}
-	if strings.Join(strings.Split(string(MyGame.WordDisplay), " "), "") == strings.ToUpper(MyGame.Word) {
+	if strings.Join(strings.Split(string(game.WordDisplay), " "), "") == strings.ToUpper(game.Word) {
 		return WIN, true
 	}
 	return ONGOING, false
@@ -286,6 +282,5 @@ func checkEndGame() (int, bool) {
 
 // Run executes the game, obviously... :)
 func Run() {
-	chargeParameters("../Files/config.txt")
 	principalMenu()
 }
