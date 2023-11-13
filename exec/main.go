@@ -1,7 +1,6 @@
 package main
 
-// Change module name to HangmanCLI to run the program here.
-import game "HangmanCLI"
+import game "github.com/debarbarinantoine/hangman-cli"
 
 func main() {
 	game.Run()
