@@ -43,7 +43,7 @@ const (
 
 // InitGame initialises the game with user data and all variables necessary.
 func (game *Game) InitGame() {
-	retreiveWords(game.Dictionary)
+	game.words = retreiveWords(game.Dictionary)
 	game.Word = game.chooseWord()
 	game.WordDisplay = []rune(strings.Repeat("_ ", len(game.Word)))
 	game.hint()

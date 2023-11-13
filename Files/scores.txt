@@ -16,4 +16,5 @@
 {"Name":"Antoine","Score":0,"Word":"oars","Difficulty":"Facile","Dictionary":"Anglais"},
 {"Name":"Antoine","Score":65,"Word":"originat","Difficulty":"Difficile","Dictionary":"Scrabble"},
 {"Name":"Antoine","Score":127,"Word":"observationnel","Difficulty":"Légendaire","Dictionary":"Scrabble"},
-{"Name":"Thorgan","Score":140,"Word":"epargneras","Difficulty":"Difficile","Dictionary":"Scrabble"}
+{"Name":"Thorgan","Score":140,"Word":"epargneras","Difficulty":"Difficile","Dictionary":"Scrabble"},
+{"Name":"Thorgan","Score":-5,"Word":"teignites","Difficulty":"Difficile","Dictionary":"Scrabble"}
