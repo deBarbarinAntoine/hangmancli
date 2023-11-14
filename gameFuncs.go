@@ -18,7 +18,7 @@ type Game struct {
 	Dictionary               string
 	WordDisplay, RunesPlayed []rune
 	words                    []string
-	nbLettersFound, nbErrors int
+	nbLettersFound, NbError  int
 }
 
 var hangman []string
@@ -162,11 +162,11 @@ func (game *Game) CountScore(result int) {
 		game.Score += 10
 	case INCORRECTRUNE:
 		game.Score -= 5
-		game.nbErrors++
+		game.NbError++
 	case CORRECTWORD:
 		game.Score += 11 * game.NbRemainingLetters()
 	case INCORRECTWORD:
-		game.nbErrors += 2
+		game.NbError += 2
 		game.Score -= 5
 	}
 }
@@ -179,7 +179,7 @@ func (game *Game) ClearGameData() {
 	game.RunesPlayed = append(game.RunesPlayed[0:0])
 	game.words = append(game.words[0:0])
 	game.nbLettersFound = 0
-	game.nbErrors = 0
+	game.NbError = 0
 }
 
 // hint reveal a random rune in wordDisplay.
@@ -271,7 +271,7 @@ func checkDictionary(words []string) bool {
 
 // CheckEndGame verify if the game is finished and returns the status and true if the game is finished or false is the game is still ongoing.
 func (game *Game) CheckEndGame() (int, bool) {
-	if game.nbErrors >= len(hangman)-1 {
+	if game.NbError >= len(hangman)-1 {
 		return LOOSE, true
 	}
 	if strings.Join(strings.Split(string(game.WordDisplay), " "), "") == strings.ToUpper(game.Word) {

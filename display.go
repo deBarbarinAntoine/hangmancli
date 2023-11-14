@@ -99,7 +99,7 @@ func (game *Game) play() {
 		fmt.Println()
 		fmt.Println(colorCode(Forestgreen), "Nom : ", colorCode(Aquamarine), game.Name, colorCode(Forestgreen), "\tDifficulté : ", colorCode(Aquamarine), ToStringDifficulty(game.Difficulty), colorCode(Forestgreen), "\tDictionnaire : ", colorCode(Aquamarine), DictionaryName(game.Dictionary), colorCode(Forestgreen), "\tScore : ", colorCode(Aquamarine), game.Score, CLEARCOLOR)
 		fmt.Println()
-		fmt.Println(hangman[game.nbErrors])
+		fmt.Println(hangman[game.NbError])
 		fmt.Println()
 		fmt.Println(colorCode(Aquamarine), string(game.WordDisplay), CLEARCOLOR)
 		fmt.Println()
@@ -136,7 +136,7 @@ func (game *Game) endGame(status int) {
 		} else if status == LOOSE {
 			fmt.Println(colorCode(Orange), "\tGAME OVER !", CLEARCOLOR)
 			fmt.Println()
-			fmt.Println(colorCode(Red), hangman[game.nbErrors], CLEARCOLOR)
+			fmt.Println(colorCode(Red), hangman[game.NbError], CLEARCOLOR)
 			fmt.Println()
 			fmt.Println(colorCode(Aquamarine), "Le mot était ", game.Word, CLEARCOLOR)
 		}
