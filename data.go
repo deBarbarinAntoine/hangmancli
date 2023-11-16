@@ -42,8 +42,10 @@ func (game *Game) SaveGame(fileName string) {
 		log.Fatal(err)
 	}
 	defer file.Close()
-
-	newEntry = append([]byte{',', '\n'}, newEntry...)
+	previousContent, _ := os.ReadFile(fileName)
+	if string(previousContent) != "" {
+		newEntry = append([]byte{',', '\n'}, newEntry...)
+	}
 	_, err = file.Write(newEntry)
 	if err != nil {
 		log.Fatal(err)
