@@ -105,7 +105,7 @@ func (game *Game) play() {
 		fmt.Println()
 		fmt.Println(colorCode(Forestgreen), "Lettres déjà jouées : ", colorCode(Orange), string(game.RunesPlayed), CLEARCOLOR)
 		fmt.Println()
-		if status, gameHasEnded = game.CheckEndGame(); gameHasEnded {
+		if status, gameHasEnded = game.CheckEndgame(len(hangman) - 1); gameHasEnded {
 			time.Sleep(time.Second * 2)
 			break
 		}

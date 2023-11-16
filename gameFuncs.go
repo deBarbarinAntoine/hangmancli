@@ -269,9 +269,9 @@ func checkDictionary(words []string) bool {
 	return true
 }
 
-// CheckEndGame verify if the game is finished and returns the status and true if the game is finished or false is the game is still ongoing.
-func (game *Game) CheckEndGame() (int, bool) {
-	if game.NbError >= len(hangman)-1 {
+// CheckEndgame verify if the game is finished and returns the status and true if the game is finished or false is the game is still ongoing.
+func (game *Game) CheckEndgame(nbErrorMax int) (int, bool) {
+	if game.NbError >= nbErrorMax {
 		return LOOSE, true
 	}
 	if strings.Join(strings.Split(string(game.WordDisplay), " "), "") == strings.ToUpper(game.Word) {
