@@ -127,7 +127,7 @@ func (game *Game) endGame(status int) {
 	for {
 		clearTerminal()
 		if status == WIN {
-			game.SaveGame("../Files/scores.txt")
+			game.SaveGame("../Files/scores.txt", false)
 			fmt.Println(colorCode(Cyan), "\tFÉLICITATIONS, VOUS AVEZ GAGNÉ !", CLEARCOLOR)
 			fmt.Println()
 			fmt.Println(colorCode(Aquamarine), "Le mot était ", strings.ToUpper(game.Word), CLEARCOLOR)

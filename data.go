@@ -25,13 +25,19 @@ type Parameters struct {
 var savedGames []Save
 
 // SaveGame saves the current game in fileName.
-func (game *Game) SaveGame(fileName string) {
+func (game *Game) SaveGame(fileName string, customDictionary bool) {
+	var dictionary string
+	if !customDictionary {
+		dictionary = DictionaryName(game.Dictionary)
+	} else {
+		dictionary = game.Dictionary
+	}
 	currentGame := Save{
 		Name:       game.Name,
 		Score:      game.Score,
 		Word:       game.Word,
 		Difficulty: ToStringDifficulty(game.Difficulty),
-		Dictionary: DictionaryName(game.Dictionary),
+		Dictionary: dictionary,
 	}
 	newEntry, err := json.Marshal(currentGame)
 	if err != nil {
