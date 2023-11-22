@@ -88,7 +88,7 @@ func (game *Game) setDifficulty() {
 }
 
 func (game *Game) play() {
-	retreiveHangman()
+	retrieveHangman()
 	game.InitGame()
 	var status int
 	var gameHasEnded bool

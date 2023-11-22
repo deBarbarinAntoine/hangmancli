@@ -43,7 +43,7 @@ const (
 
 // InitGame initialises the game with user data and all variables necessary.
 func (game *Game) InitGame() {
-	game.words = retreiveWords(game.Dictionary)
+	game.words = retrieveWords(game.Dictionary)
 	game.Word = game.chooseWord()
 	game.WordDisplay = []rune(strings.Repeat("_ ", len(game.Word)))
 	game.hint()
@@ -95,8 +95,8 @@ func (game *Game) NbRemainingLetters() int {
 	return result
 }
 
-// retreiveWords retreive the words from the selected dictionary.
-func retreiveWords(dictionary string) []string {
+// retrieveWords retreive the words from the selected dictionary.
+func retrieveWords(dictionary string) []string {
 	var words []string
 	if dictionary == "" {
 		dictionary = "../Files/Dictionaries/ods5.txt"
@@ -109,13 +109,13 @@ func retreiveWords(dictionary string) []string {
 	if !checkDictionary(words) {
 		fmt.Println(colorCode(Red), "Erreur d'acquisition des mots du dictionnaire", CLEARCOLOR)
 		time.Sleep(time.Second * 2)
-		words = retreiveWords("../Files/Dictionaries/ods5.txt")
+		words = retrieveWords("../Files/Dictionaries/ods5.txt")
 	}
 	return words
 }
 
-// retreiveHangman retreives the hangman in /Files/hangman.txt and stores it in hangman.
-func retreiveHangman() {
+// retrieveHangman retreives the hangman in /Files/hangman.txt and stores it in hangman.
+func retrieveHangman() {
 	hangman = append(hangman[0:0])
 	content, err := os.ReadFile("../Files/hangman.txt")
 	if err != nil {
