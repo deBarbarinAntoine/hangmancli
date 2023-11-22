@@ -95,7 +95,7 @@ func (game *Game) NbRemainingLetters() int {
 	return result
 }
 
-// retrieveWords retreive the words from the selected dictionary.
+// retrieveWords retrieves the words from the selected dictionary.
 func retrieveWords(dictionary string) []string {
 	var words []string
 	if dictionary == "" {
@@ -114,7 +114,7 @@ func retrieveWords(dictionary string) []string {
 	return words
 }
 
-// retrieveHangman retreives the hangman in /Files/hangman.txt and stores it in hangman.
+// retrieveHangman retrieves the hangman in /Files/hangman.txt and stores it in hangman.
 func retrieveHangman() {
 	hangman = append(hangman[0:0])
 	content, err := os.ReadFile("../Files/hangman.txt")

@@ -170,7 +170,7 @@ func changeDictionary() {
 }
 
 func topScores() {
-	RetreiveSavedGames("../Files/scores.txt")
+	RetrieveSavedGames("../Files/scores.txt")
 	SortTopTenGames()
 	for {
 		clearTerminal()

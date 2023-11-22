@@ -58,8 +58,8 @@ func (game *Game) SaveGame(fileName string, customDictionary bool) {
 	}
 }
 
-// RetreiveSavedGames retreive all saved games present in fileName and put it in savedEntries.
-func RetreiveSavedGames(fileName string) []Save {
+// RetrieveSavedGames retrieves all saved games present in fileName and put it in savedEntries.
+func RetrieveSavedGames(fileName string) []Save {
 	savedEntries, err := os.ReadFile(fileName)
 	if err != nil {
 		fmt.Println(colorCode(Salmon), "Aucune sauvegarde détectée...", CLEARCOLOR)
@@ -78,7 +78,7 @@ func RetreiveSavedGames(fileName string) []Save {
 	return savedGames
 }
 
-// ChargeParameters retreive the parameters present in fileName and changes all corresponding variables.
+// ChargeParameters retrieves the parameters present in fileName and changes all corresponding variables.
 func (game *Game) ChargeParameters(fileName string) {
 	var savedParameters Parameters
 	savedEntries, err := os.ReadFile(fileName)
